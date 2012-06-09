@@ -135,7 +135,7 @@ function potd_display_post($display) {
 				'<div class="potd_content">' . do_shortcode($curr_post->post_content) . '</div>';
 		}
 		elseif ($display == 'thumbnail') {
-			return '<div class="potd_content">' . get_the_post_thumbnail($curr_post->ID) . '</div>';
+			return '<div class="potd_thumbnail">' . get_the_post_thumbnail($curr_post->ID, '', array('title' => $curr_post->post_title) ) . '</div>';
 		} else {
 			return '<div class="potd_' . $display . '">' . do_shortcode($curr_post->$display) . '</div>';
 		}
