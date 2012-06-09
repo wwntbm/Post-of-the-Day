@@ -130,8 +130,15 @@ function potd_display_post($display) {
 			return '<p>There are currently no posts to display here.</p>';
 		} 
 
-		return '<h2 class="potd_title">' . do_shortcode($curr_post->post_title) . '</h2>' . 
+		if ($display == 'default') {
+			return '<h2 class="potd_title">' . do_shortcode($curr_post->post_title) . '</h2>' . 
 				'<div class="potd_content">' . do_shortcode($curr_post->post_content) . '</div>';
+		}
+		elseif ($display == 'thumbnail') {
+			return '<div class="potd_content">' . get_the_post_thumbnail($curr_post->ID) . '</div>';
+		} else {
+			return '<div class="potd_' . $display . '">' . do_shortcode($curr_post->$display) . '</div>';
+		}
 	} 
 }
 
@@ -326,12 +333,18 @@ function potd_check_rotate() {
  * Replaces shortcode "[potd]" with random post
  * Can be called anywhere in template with 
  * <?php echo do_shortcode('[potd]'); ?>
- * @param array $atts (not used at this time)
+ * @param array $atts ('default' shows the post title and content; "thumbnail" shows just the fetaured image; other items as returned in the $curr_post object)
  * @param string $content (not used at this time)
  * @param string $code (not used at this time)
  */
 function potd_shortcode($atts = array(), $content=null, $code="") {
-	return potd_display_post();
+	extract(shortcode_atts(array(
+		"display" => 'default'
+	), $atts));
+
+	$display = sanitize_text_field($display);
+
+	return potd_display_post($display);
 }
 
 /**
