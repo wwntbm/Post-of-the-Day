@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name: Post of the Day
- * Plugin URI: http://morgandavison.com/
- * Description: Display a random post per chosen interval from chosen categories
- * Author: Morgan Davison
- * Version: 1.0
- * Author URI: http://www.morgandavison.com
+ * Plugin URI: http://andrewrminion.com
+ * Description: Display a random post per chosen interval from chosen categories or post types.
+ * Author: Andrew Minion
+ * Version: 1.1
+ * Author URI: http://www.andrewrminion.com
  */
 
 /**
- * Copyright 2011 Morgan Davison
+ * Copyright 2011-2012 Morgan Davison and Andrew Minion
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as 
  * published by the Free Software Foundation.
@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-define('POTD_VERSION', '1.0');
+define('POTD_VERSION', '1.1');
 define('POTD_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 function potd_admin() {
@@ -52,6 +52,8 @@ function potd_install() {
 	
 	// Create default options 
 	// Get id of uncategorized
+	$post_type = get_post_types('','objects');
+	add_option('potd_post_types',$post_type->name);
 	$category = get_category_by_slug('uncategorized');
 	add_option('potd_categories', $category->term_id);
 	add_option('potd_amount', '24');
@@ -107,7 +109,7 @@ function potd_install() {
  * Displays the post to the page
  * @return string
  */
-function potd_display_post() {
+function potd_display_post($display) {
 	global $wpdb;
 	
 	$table_name = $wpdb->prefix . "postoftheday";
@@ -184,30 +186,81 @@ function potd_get_random_post($curr_post, $prev_post) {
 	$curr_post = intval($curr_post);
 	$prev_post = intval($prev_post);
 	
+	$potd_post_types = get_option('potd_post_types');
 	$potd_categories = get_option('potd_categories');
 	$selected_posts_id_array = array();
-	if ( !empty($potd_categories) ) {
-		foreach ($potd_categories as $potd_category) {
-			$args = array(
-			    'numberposts'     => 0,
-			    'offset'          => 0,
-			    'category'        => $potd_category,
-			    'orderby'         => 'post_date',
-			    'order'           => 'ASC',
-			    'include'         => '',
-			    'exclude'         => '',
-			    'meta_key'        => '',
-			    'meta_value'      => '',
-			    'post_type'       => 'post',
-			    'post_mime_type'  => '',
-			    'post_parent'     => '',
-			    'post_status'     => 'publish' 
-			);
-			$selected_posts = get_posts( $args );
-			foreach ( $selected_posts as $selected_post ) {
-				$selected_posts_id_array[] = $selected_post->ID;
-			}
-		}
+	if ( ( !empty($potd_categories) ) OR ( !empty($potd_post_types) ) ) {
+		if ((!empty($potd_categories)) AND (empty($potd_post_types))) { // categories no post_types
+			foreach ($potd_categories as $potd_category) {
+				$args = array(
+				    'numberposts'     => 0,
+				    'offset'          => 0,
+				    'category'        => $potd_category,
+				    'orderby'         => 'post_date',
+				    'order'           => 'ASC',
+				    'include'         => '',
+				    'exclude'         => '',
+				    'meta_key'        => '',
+				    'meta_value'      => '',
+				    'post_type'       => 'post',
+				    'post_mime_type'  => '',
+				    'post_parent'     => '',
+				    'post_status'     => 'publish' 
+				);
+				$selected_posts = get_posts( $args );
+				foreach ( $selected_posts as $selected_post ) {
+					$selected_posts_id_array[] = $selected_post->ID;
+				}
+			} // end $potd_categories
+		} // end categories no post_types
+		elseif ((empty($potd_categories)) AND (!empty($potd_post_types))) { // post_types no categories
+			foreach ($potd_post_types as $potd_post_type) {
+				$args = array(
+				    'numberposts'     => 0,
+				    'offset'          => 0,
+				    'category'        => '',
+				    'orderby'         => 'post_date',
+				    'order'           => 'ASC',
+				    'include'         => '',
+				    'exclude'         => '',
+				    'meta_key'        => '',
+				    'meta_value'      => '',
+				    'post_type'       => $potd_post_type,
+				    'post_mime_type'  => '',
+				    'post_parent'     => '',
+				    'post_status'     => 'publish' 
+				);
+				$selected_posts = get_posts( $args );
+				foreach ( $selected_posts as $selected_post ) {
+					$selected_posts_id_array[] = $selected_post->ID;
+				}
+			} // end $potd_categories
+		} // end post_types no categories
+		elseif ((!empty($potd_categories)) AND (!empty($potd_post_types))) { // post_types and categories
+			foreach ($potd_post_types as $potd_post_type) {
+				foreach ($potd_categories as $potd_category) {
+					$args = array(
+					    'numberposts'     => 0,
+					    'offset'          => 0,
+					    'category'        => $potd_category,
+					    'orderby'         => 'post_date',
+					    'order'           => 'ASC',
+					    'include'         => '',
+					    'exclude'         => '',
+					    'meta_key'        => '',
+					    'meta_value'      => '',
+					    'post_type'       => $potd_post_type,
+					    'post_mime_type'  => '',
+					    'post_parent'     => '',
+					    'post_status'     => 'publish' 
+					);
+					$selected_posts = get_posts( $args );
+					foreach ( $selected_posts as $selected_post ) {
+						$selected_posts_id_array[] = $selected_post->ID;
+					}
+				} // end $potd_categories
+			} // end $potd_post_types
+		} // end post_types and categories
 		
 		$eligible_posts_id_array = array(); // Posts that are not last one or current one
 		foreach( $selected_posts_id_array as $selected_post_id ){
@@ -296,6 +349,7 @@ function potd_uninstall() {
 		$wpdb->query($qry);
 	}
 	
+	delete_option('potd_post_types');
 	delete_option('potd_categories');
 	delete_option('potd_amount');
 	delete_option('potd_interval');
