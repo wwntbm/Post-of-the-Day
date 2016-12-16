@@ -130,15 +130,15 @@ function potd_display_post($display) {
 			return '<p>There are currently no posts to display here.</p>';
 		} 
 
-		if ($display == 'default') {
+        if ($display == 'default') {
 			return '<h2 class="potd_title">' . do_shortcode($curr_post->post_title) . '</h2>' . 
 				'<div class="potd_content">' . do_shortcode($curr_post->post_content) . '</div>';
 		}
 		elseif ($display == 'thumbnail') {
-			return '<div class="potd_thumbnail">' . get_the_post_thumbnail($curr_post->ID, '', array('title' => $curr_post->post_title) ) . '</div>';
+			return '<div class="potd_thumbnail">' . get_the_post_thumbnail($curr_post->ID, 'missionary_of_the_day', array('title' => $curr_post->post_title) ) . '</div>';
 		} else {
 			return '<div class="potd_' . $display . '">' . do_shortcode($curr_post->$display) . '</div>';
-		}
+        }
 	} 
 }
 
