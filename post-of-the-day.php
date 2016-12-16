@@ -135,7 +135,9 @@ function potd_display_post($display) {
 				'<div class="potd_content">' . do_shortcode($curr_post->post_content) . '</div>';
 		}
 		elseif ($display == 'thumbnail') {
-			return '<div class="potd_thumbnail">' . get_the_post_thumbnail($curr_post->ID, 'missionary_of_the_day', array('title' => $curr_post->post_title) ) . '</div>';
+			return '<div class="potd_thumbnail">' . get_the_post_thumbnail($curr_post->ID, 'missionary_of_the_day', array('title' => $curr_post->post_title, 'alt' => $curr_post->post_title, 'class' => 'rounded shadowed') ) . '</div>';
+        } elseif ($display == 'link') {
+            return '<a href="' . get_permalink($curr_post->ID) . '" class="home-button">';
 		} else {
 			return '<div class="potd_' . $display . '">' . do_shortcode($curr_post->$display) . '</div>';
         }
