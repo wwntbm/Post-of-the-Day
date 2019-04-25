@@ -136,7 +136,7 @@ function potd_display_post($display) {
 		elseif ($display == 'thumbnail') {
 			return '<div class="potd_thumbnail">' . get_the_post_thumbnail($curr_post->ID, 'missionary_of_the_day', array('title' => $curr_post->post_title, 'alt' => $curr_post->post_title, 'class' => 'rounded shadowed') ) . '</div>';
         } elseif ($display == 'link') {
-            return '<a href="' . get_permalink($curr_post->ID) . '" class="home-button">';
+            return '<a href="' . get_permalink($curr_post->ID) . '">';
 		} else {
 			return '<div class="potd_' . $display . '">' . do_shortcode($curr_post->$display) . '</div>';
         }
