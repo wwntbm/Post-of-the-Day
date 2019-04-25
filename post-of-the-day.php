@@ -24,7 +24,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-define('POTD_VERSION', '1.1');
+define('POTD_VERSION', '1.2');
 define('POTD_PLUGIN_URL', plugin_dir_url( __FILE__ ));
 
 function potd_admin() {
@@ -42,8 +42,7 @@ add_action('update_option_potd_categories', 'potd_rotate_post'); // When user ch
 
 function potd_init() {
 	if (is_admin()) {
-		wp_register_script('post-of-the-day.js', POTD_PLUGIN_URL . 'post-of-the-day.js', array('jquery'));
-		wp_enqueue_script('post-of-the-day.js');
+		wp_enqueue_script( 'post-of-the-day.js', POTD_PLUGIN_URL . 'post-of-the-day.js', array('jquery'), POTD_VERSION, true );
 	}
 }
 
