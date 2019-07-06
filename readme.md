@@ -35,8 +35,11 @@ Alternatively, if you want to include the post somewhere in your theme that is n
 * A: No, not at this point.
 
 ## Changelog ##
+### 1.2 ###
+Fix some logic preventing more than the first 10 posts from ever showing up.
+
 ### 1.1 ###
-Add capability to choose post_types in addition to categories 
+Add capability to choose post_types in addition to categories
 
 ### 1.0 ###
 First Release
