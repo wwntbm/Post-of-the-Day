@@ -201,7 +201,7 @@ function potd_get_random_post($curr_post, $prev_post) {
 		if ((!empty($potd_categories)) AND (empty($potd_post_types))) { // categories no post_types
 			foreach ($potd_categories as $potd_category) {
 				$args = array(
-				    'numberposts'     => 0,
+				    'numberposts'     => -1,
 				    'offset'          => 0,
 				    'category'        => $potd_category,
 				    'orderby'         => 'post_date',
@@ -213,18 +213,16 @@ function potd_get_random_post($curr_post, $prev_post) {
 				    'post_type'       => 'post',
 				    'post_mime_type'  => '',
 				    'post_parent'     => '',
-				    'post_status'     => 'publish' 
+					'post_status'     => 'publish',
+					'fields'          => 'ids',
 				);
-				$selected_posts = get_posts( $args );
-				foreach ( $selected_posts as $selected_post ) {
-					$selected_posts_id_array[] = $selected_post->ID;
-				}
+				$selected_posts_id_array = get_posts( $args );
 			} // end $potd_categories
 		} // end categories no post_types
 		elseif ((empty($potd_categories)) AND (!empty($potd_post_types))) { // post_types no categories
 			foreach ($potd_post_types as $potd_post_type) {
 				$args = array(
-				    'numberposts'     => 0,
+				    'numberposts'     => -1,
 				    'offset'          => 0,
 				    'category'        => '',
 				    'orderby'         => 'post_date',
@@ -236,19 +234,17 @@ function potd_get_random_post($curr_post, $prev_post) {
 				    'post_type'       => $potd_post_type,
 				    'post_mime_type'  => '',
 				    'post_parent'     => '',
-				    'post_status'     => 'publish' 
+					'post_status'     => 'publish',
+					'fields'          => 'ids',
 				);
-				$selected_posts = get_posts( $args );
-				foreach ( $selected_posts as $selected_post ) {
-					$selected_posts_id_array[] = $selected_post->ID;
-				}
+				$selected_posts_id_array = get_posts( $args );
 			} // end $potd_categories
 		} // end post_types no categories
 		elseif ((!empty($potd_categories)) AND (!empty($potd_post_types))) { // post_types and categories
 			foreach ($potd_post_types as $potd_post_type) {
 				foreach ($potd_categories as $potd_category) {
 					$args = array(
-					    'numberposts'     => 0,
+					    'numberposts'     => -1,
 					    'offset'          => 0,
 					    'category'        => $potd_category,
 					    'orderby'         => 'post_date',
@@ -260,12 +256,10 @@ function potd_get_random_post($curr_post, $prev_post) {
 					    'post_type'       => $potd_post_type,
 					    'post_mime_type'  => '',
 					    'post_parent'     => '',
-					    'post_status'     => 'publish' 
+						'post_status'     => 'publish',
+						'fields'          => 'ids',
 					);
-					$selected_posts = get_posts( $args );
-					foreach ( $selected_posts as $selected_post ) {
-						$selected_posts_id_array[] = $selected_post->ID;
-					}
+					$selected_posts_id_array = get_posts( $args );
 				} // end $potd_categories
 			} // end $potd_post_types
 		} // end post_types and categories
@@ -289,7 +283,7 @@ function potd_get_random_post($curr_post, $prev_post) {
 			}
 		}
 		
-		$random_post_id = mt_rand(0, count($eligible_posts_id_array) - 1);
+		$random_post_id = wp_rand(0, count($eligible_posts_id_array) - 1);
 		if ( !empty($eligible_posts_id_array) ) {
 			return $eligible_posts_id_array[$random_post_id];
 		} 
