@@ -134,7 +134,7 @@ function potd_display_post( $display ) {
 		} elseif ( $display == 'thumbnail' ) {
 			return '<div class="potd_thumbnail">' . get_the_post_thumbnail(
 				$curr_post->ID,
-				'missionary_of_the_day_m',
+				'missionary_of_the_day_l',
 				array(
 					'title' => $curr_post->post_title,
 					'alt'   => $curr_post->post_title,
